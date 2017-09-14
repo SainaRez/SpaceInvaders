@@ -14,9 +14,12 @@
 
 // Function Prototypes
 void swDelay(char numLoops);
+void drawAliens();
 
 // Declare globals here
 unsigned char currKey = 0;
+int level = 4;
+int randArray[6];
 
 // Main
 void main(void){
@@ -60,20 +63,23 @@ void main(void){
            Graphics_drawStringCentered(&g_sContext, "SPACE INVADERS", AUTO_STRING_LENGTH, 50, 50, TRANSPARENT_TEXT);
            Graphics_flushBuffer(&g_sContext);
            //swDelay(10000);
-
-           startGame();     //waits for '*' input to start game
+           startGame(); //waits for '*' input to start game
            state++;
            break;
        case 1:                      //Countdown, need to ask in office hours how to make each number show on screen for longer
-             Graphics_clearDisplay(&g_sContext); // Clear the display
+              Graphics_clearDisplay(&g_sContext); // Clear the display
               Graphics_drawStringCentered(&g_sContext, "...3...", AUTO_STRING_LENGTH, 40, 40, TRANSPARENT_TEXT);
               Graphics_flushBuffer(&g_sContext);
+              swDelay(1);
               Graphics_clearDisplay(&g_sContext); // Clear the display
               Graphics_drawStringCentered(&g_sContext, "...2...", AUTO_STRING_LENGTH, 40, 40, TRANSPARENT_TEXT);
               Graphics_flushBuffer(&g_sContext);
+              swDelay(1);
               Graphics_clearDisplay(&g_sContext); // Clear the display
               Graphics_drawStringCentered(&g_sContext, "...1...", AUTO_STRING_LENGTH, 40, 40, TRANSPARENT_TEXT);
               Graphics_flushBuffer(&g_sContext);
+              swDelay(1);
+              Graphics_clearDisplay(&g_sContext); // Clear the displays
               state++;
           break;
 
@@ -81,6 +87,7 @@ void main(void){
            //switch(substate1){
            //case 0:          //Draw aliens
                drawAliens();
+               swDelay(50);
               // substate1++;
                break;
           /* case 1:          //Update screen, moving aliens down and looking for keypad input
@@ -105,34 +112,36 @@ void startGame(){
         currKey = getKey();
         if (currKey == '*'){
                        return;
-                   }
+        }
     }
 }
 
-void drawAliens(){
-    int level = 2;
-    int rands[level];
+void drawAliens(int level, int randArray[]){
+    //int level = 1;
+//    int rands[level];
     int i, current;
-    for(i=0; i<7; i++){
-        rands[i] = rand() % 7;  //not sure if I need to make sure the random numbers are new
-        current = rands[i];
+    for(i=0; i<level; i++){
+//        rands[i] = (rand() % 6) + 1;  //not sure if I need to make sure the random numbers are new
+//        current = rands[i];
+        randArray[i] = (rand() % 6) + 1;
+        current = randArray[i];
         if(current == 1){
-            Graphics_clearDisplay(&g_sContext); // Clear the display
+            //Graphics_clearDisplay(&g_sContext); // Clear the display
             Graphics_drawStringCentered(&g_sContext, "1", AUTO_STRING_LENGTH, 5, 5, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
         if(current == 2){
-            Graphics_clearDisplay(&g_sContext); // Clear the display
+            //Graphics_clearDisplay(&g_sContext); // Clear the display
             Graphics_drawStringCentered(&g_sContext, "2", AUTO_STRING_LENGTH, 20, 5, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
         if(current == 3){
-            Graphics_clearDisplay(&g_sContext); // Clear the display
+           // Graphics_clearDisplay(&g_sContext); // Clear the display
             Graphics_drawStringCentered(&g_sContext, "3", AUTO_STRING_LENGTH, 39, 5, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
         if(current == 4){
-            Graphics_clearDisplay(&g_sContext); // Clear the display
+            //Graphics_clearDisplay(&g_sContext); // Clear the display
             Graphics_drawStringCentered(&g_sContext, "4", AUTO_STRING_LENGTH, 56, 5, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
