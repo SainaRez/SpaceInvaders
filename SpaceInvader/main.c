@@ -14,16 +14,21 @@
 
 // Function Prototypes
 void swDelay(char numLoops);
+void startGame();
+void makeArray();
 void drawAliens();
+void moveAliens();
 
 // Declare globals here
 unsigned char currKey = 0;
 int level = 4;
 int randArray[6];
+int location = 8;
 
 // Main
 void main(void){
     //unsigned char ret_val = 0x0F;
+
     unsigned char dispSz = 3;
     unsigned char dispThree[3];
 
@@ -35,7 +40,6 @@ void main(void){
 
     // Useful code starts here
     initLeds();
-
     configDisplay();
     configKeypad();
 
@@ -54,7 +58,7 @@ void main(void){
     dispThree[0] = ' ';
     dispThree[2] = ' ';
     int state = 0;
-    int substate1 = 0;
+    int substate = 0;
     while (1)    // Forever loop
     {
        switch(state){
@@ -62,113 +66,157 @@ void main(void){
            Graphics_clearDisplay(&g_sContext); // Clear the display
            Graphics_drawStringCentered(&g_sContext, "SPACE INVADERS", AUTO_STRING_LENGTH, 50, 50, TRANSPARENT_TEXT);
            Graphics_flushBuffer(&g_sContext);
-           //swDelay(10000);
            startGame(); //waits for '*' input to start game
            state++;
            break;
-       case 1:                      //Countdown, need to ask in office hours how to make each number show on screen for longer
+       case 1:
               Graphics_clearDisplay(&g_sContext); // Clear the display
-              Graphics_drawStringCentered(&g_sContext, "...3...", AUTO_STRING_LENGTH, 40, 40, TRANSPARENT_TEXT);
+              Graphics_drawStringCentered(&g_sContext, "3!", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
               Graphics_flushBuffer(&g_sContext);
               swDelay(1);
               Graphics_clearDisplay(&g_sContext); // Clear the display
-              Graphics_drawStringCentered(&g_sContext, "...2...", AUTO_STRING_LENGTH, 40, 40, TRANSPARENT_TEXT);
+              Graphics_drawStringCentered(&g_sContext, "2!", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
               Graphics_flushBuffer(&g_sContext);
               swDelay(1);
               Graphics_clearDisplay(&g_sContext); // Clear the display
-              Graphics_drawStringCentered(&g_sContext, "...1...", AUTO_STRING_LENGTH, 40, 40, TRANSPARENT_TEXT);
+              Graphics_drawStringCentered(&g_sContext, "1!", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
               Graphics_flushBuffer(&g_sContext);
               swDelay(1);
               Graphics_clearDisplay(&g_sContext); // Clear the displays
               state++;
           break;
-
-       case 2:                      //Game
-           //switch(substate1){
-           //case 0:          //Draw aliens
-               drawAliens();
-               swDelay(50);
-              // substate1++;
-               break;
-          /* case 1:          //Update screen, moving aliens down and looking for keypad input
-               break;
-           case 2:         //Level transition, incrementing of number and speed of aliens
-               //include level++ at some point
-               break;
+       case 2:          //Draw aliens
+           makeArray();
+           unsigned int k = 0;
+           while (k <= 3) {
+           drawAliens();
+           k++;
            }
-       case 3:
-           display("GAME OVER", 24 48);
+           state++;
+           break;
+       case 3:      //Update screen, moving aliens down and looking for keypad input
+           moveAliens();
+           state++;
+           break;
+               //case 2:         //Level transition, incrementing of number and speed of aliens
+                   //include level++ at some point
+                   //break;
+       case 4:
+           Graphics_clearDisplay(&g_sContext); // Clear the display
+           k = 0;
+           while (k < 10) {
+               setLeds(4);
+               BuzzerOn();
+               Graphics_drawStringCentered(&g_sContext, "You Suck", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
+               Graphics_flushBuffer(&g_sContext);
+               k++;
+           }
+           //setLeds(4);
+           //BuzzerOn();
+           //Graphics_drawStringCentered(&g_sContext, "GAME OVER LOSER", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
+           //Graphics_flushBuffer(&g_sContext);
+           //swDelay(5);
+           BuzzerOff();
+           state = 0;
+           break;
+           /*display("GAME OVER", 24 48);
            flashLEDs;                   //not sure if this is inclusive of what is needed during a game over, need to check
            soundBuzzer();
            break; */
        // }           //end switch case
 
-
     }
 }// end while (1)
 } // end main
+
 void startGame(){
     while(1){
         currKey = getKey();
         if (currKey == '*'){
-                       return;
+            return;
         }
     }
 }
 
-void drawAliens(int level, int randArray[]){
-    //int level = 1;
-//    int rands[level];
-    int i, current;
-    for(i=0; i<level; i++){
-//        rands[i] = (rand() % 6) + 1;  //not sure if I need to make sure the random numbers are new
-//        current = rands[i];
-        randArray[i] = (rand() % 6) + 1;
+void makeArray() {
+    int j;
+    for(j = 0; j < level; j++) {
+        randArray[j] = (rand() % 6) + 1;
+    }
+    return;
+}
+
+void drawAliens(){
+
+    int i, current = 0;
+    for(i = 0; i < level; i++){
+        //randArray[i] = (rand() % 6) + 1;
         current = randArray[i];
         if(current == 1){
-            //Graphics_clearDisplay(&g_sContext); // Clear the display
-            Graphics_drawStringCentered(&g_sContext, "1", AUTO_STRING_LENGTH, 5, 5, TRANSPARENT_TEXT);
+            Graphics_drawStringCentered(&g_sContext, "1", AUTO_STRING_LENGTH, 5, location, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
         if(current == 2){
-            //Graphics_clearDisplay(&g_sContext); // Clear the display
-            Graphics_drawStringCentered(&g_sContext, "2", AUTO_STRING_LENGTH, 20, 5, TRANSPARENT_TEXT);
+            Graphics_drawStringCentered(&g_sContext, "2", AUTO_STRING_LENGTH, 20, location, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
         if(current == 3){
-           // Graphics_clearDisplay(&g_sContext); // Clear the display
-            Graphics_drawStringCentered(&g_sContext, "3", AUTO_STRING_LENGTH, 39, 5, TRANSPARENT_TEXT);
+            Graphics_drawStringCentered(&g_sContext, "3", AUTO_STRING_LENGTH, 39, location, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
         if(current == 4){
-            //Graphics_clearDisplay(&g_sContext); // Clear the display
-            Graphics_drawStringCentered(&g_sContext, "4", AUTO_STRING_LENGTH, 56, 5, TRANSPARENT_TEXT);
+            Graphics_drawStringCentered(&g_sContext, "4", AUTO_STRING_LENGTH, 56, location, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
         if(current == 5){
-            Graphics_clearDisplay(&g_sContext); // Clear the display
-            Graphics_drawStringCentered(&g_sContext, "5", AUTO_STRING_LENGTH, 73, 5, TRANSPARENT_TEXT);
+            Graphics_drawStringCentered(&g_sContext, "5", AUTO_STRING_LENGTH, 73, location, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
         if(current == 6){
-            Graphics_clearDisplay(&g_sContext); // Clear the display
-            Graphics_drawStringCentered(&g_sContext, "6", AUTO_STRING_LENGTH, 90, 5, TRANSPARENT_TEXT);
+            Graphics_drawStringCentered(&g_sContext, "6", AUTO_STRING_LENGTH, 90, location, TRANSPARENT_TEXT);
             Graphics_flushBuffer(&g_sContext);
         }
     }
+    return;
 }
 
-
-
-
-
-
-
-
-
-
 void moveAliens(){
+    int i = 0;
+    while (i < 9) {
+        location = location + 9;
+        Graphics_clearDisplay(&g_sContext);
+        unsigned int k = 0;
+        while (k <= 3) {
+            drawAliens();
+            unsigned char keyPressed = getKey();
+            for (int n = 0; n < level; n++) {
+                switch (keyPressed){
+                case '1':
+                    if
 
+                if atoi(keyPressed)
+            }
+            switch (keyPressed){
+            case '1':
+
+                if (randArray)
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+            case '*':
+            case '0':
+            case '#':
+            }
+            k++;
+        }
+        i++;
+    }
+    return;
 }
 
 void swDelay(char numLoops)

@@ -77,7 +77,6 @@ void setLeds(unsigned char state)
     P6OUT |= mask;
 }
 
-
 /*
  * Enable a PWM-controlled buzzer on P3.5
  * This function makes use of TimerB0.
