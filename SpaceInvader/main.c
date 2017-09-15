@@ -182,6 +182,7 @@ void drawAliens(){
 
 void moveAliens(){
     int i = 0;
+    int newArray[6];
     while (i < 9) {
         location = location + 9;
         Graphics_clearDisplay(&g_sContext);
