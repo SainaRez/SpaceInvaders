@@ -32,7 +32,7 @@ tContext g_sContext;    // user defined type used by graphics library
 tContext g_sContext;    // user defined type used by graphics library
 
 
-void initLeds(void)
+void initLeds()
 {
     // Configure LEDs as outputs, initialize to logic low (off)
     // Note the assigned port pins are out of order test board
@@ -75,6 +75,10 @@ void setLeds(unsigned char state)
     if (state & BIT3)
         mask |= BIT2;   // Left most LED on P6.2
     P6OUT |= mask;
+}
+
+void LedOff() {
+    P6OUT &= ~(BIT4|BIT3|BIT2|BIT1);
 }
 
 /*

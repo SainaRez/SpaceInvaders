@@ -35,6 +35,10 @@ void main(void){
     unsigned char dispSz = 3;
     unsigned char dispThree[3];
     time_t t;
+    int isEmpty = 5;
+    int f = 0;
+    int e = 0;
+    int c = 0;
 
     // Define some local variables
 
@@ -62,7 +66,6 @@ void main(void){
     dispThree[0] = ' ';
     dispThree[2] = ' ';
     int state = 0;
-    int substate = 0;
     srand((unsigned) time(&t));
     while (1)    // Forever loop
     {
@@ -91,6 +94,10 @@ void main(void){
               state++;
           break;
        case 2:          //Draw aliens
+           for (f = 0; f < 6; f++) {
+                randArray[f] = 0;
+           }
+           location = 8;
            makeArray();
            unsigned int k = 0;
            while (k <= 3) {
@@ -101,40 +108,63 @@ void main(void){
            break;
        case 3:      //Update screen, moving aliens down and looking for keypad input
            moveAliens();
-           state++;
+           for (e = 0; e < 6; e++) {
+               if (randArray[e] != 0) {
+                isEmpty = 0;   //array is not all zero
+                break;
+               }
+               else {
+                   isEmpty = 1; //array is all zero
+               }
+           }
+           if (location == 89 && isEmpty == 0) {
+               state++;
+           }
+           else if (location == 89 && isEmpty == 1) {
+               if (level < 6) {
+
+                   Graphics_clearDisplay(&g_sContext);
+                   Graphics_drawStringCentered(&g_sContext, "Next Level!", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
+                   Graphics_flushBuffer(&g_sContext);
+                   swDelay(3);
+                   Graphics_clearDisplay(&g_sContext);
+                   level++;
+                   state = 2;
+               }
+               else {
+                   BuzzerOn();
+                   setLeds(15);
+                   Graphics_clearDisplay(&g_sContext);
+                   Graphics_drawStringCentered(&g_sContext, "YOU WON!", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
+                   Graphics_flushBuffer(&g_sContext);
+                   swDelay(3);
+                   Graphics_clearDisplay(&g_sContext);
+                   BuzzerOff();
+                   LedOff();
+                   level = 1;
+                   state = 0;
+               }
+           }
            break;
-               //case 2:         //Level transition, incrementing of number and speed of aliens
-                   //include level++ at some point
-                   //break;
        case 4:
            Graphics_clearDisplay(&g_sContext); // Clear the display
            k = 0;
            while (k < 10) {
-               setLeds(4);
+               setLeds(15);
                BuzzerOn();
                Graphics_drawStringCentered(&g_sContext, "You Suck", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
                Graphics_flushBuffer(&g_sContext);
                k++;
            }
-           int c;
            for (c = 0; c < 6; c++) {
                randArray[c] = 0;
           }
            location = 8;
-           //setLeds(4);
-           //BuzzerOn();
-           //Graphics_drawStringCentered(&g_sContext, "GAME OVER LOSER", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
-           //Graphics_flushBuffer(&g_sContext);
-           //swDelay(5);
            BuzzerOff();
+           LedOff();
            state = 0;
+           level = 1;
            break;
-           /*display("GAME OVER", 24 48);
-           flashLEDs;                   //not sure if this is inclusive of what is needed during a game over, need to check
-           soundBuzzer();
-           break; */
-       // }           //end switch case
-
     }
 }// end while (1)
 } // end main
