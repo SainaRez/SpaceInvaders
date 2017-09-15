@@ -189,30 +189,16 @@ void moveAliens(){
         unsigned int k = 0;
         while (k <= 3) {
             drawAliens();
-            unsigned char keyPressed = getKey();
-            for (int n = 0; n < level; n++) {
-                switch (keyPressed){
-                case '1':
-                    if
-
-                if atoi(keyPressed)
+            unsigned int keyPressed = atoi(getKey());
+            int x = 0;
+            int n;
+            for (n = 0; n < level; n++) {
+                if (randArray[n] != keyPressed) {
+                    newArray[x] = randArray[n];
+                    x++;
+                }
             }
-            switch (keyPressed){
-            case '1':
-
-                if (randArray)
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-            case '*':
-            case '0':
-            case '#':
-            }
+            randArray[6] = newArray[6];
             k++;
         }
         i++;
