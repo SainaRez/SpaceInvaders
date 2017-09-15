@@ -11,7 +11,10 @@
  * You include the header associated with that file(s)
  * into the main file of your project. */
 #include "peripherals.h"
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 // Function Prototypes
 void swDelay(char numLoops);
 void startGame();
@@ -21,8 +24,8 @@ void moveAliens();
 
 // Declare globals here
 unsigned char currKey = 0;
-int level = 4;
-int randArray[6];
+int level = 1;
+int randArray[6] = {};
 int location = 8;
 
 // Main
@@ -31,6 +34,7 @@ void main(void){
 
     unsigned char dispSz = 3;
     unsigned char dispThree[3];
+    time_t t;
 
     // Define some local variables
 
@@ -59,6 +63,7 @@ void main(void){
     dispThree[2] = ' ';
     int state = 0;
     int substate = 0;
+    srand((unsigned) time(&t));
     while (1)    // Forever loop
     {
        switch(state){
@@ -111,6 +116,11 @@ void main(void){
                Graphics_flushBuffer(&g_sContext);
                k++;
            }
+           int c;
+           for (c = 0; c < 6; c++) {
+               randArray[c] = 0;
+          }
+           location = 8;
            //setLeds(4);
            //BuzzerOn();
            //Graphics_drawStringCentered(&g_sContext, "GAME OVER LOSER", AUTO_STRING_LENGTH, 48, 40, TRANSPARENT_TEXT);
@@ -141,7 +151,20 @@ void startGame(){
 void makeArray() {
     int j;
     for(j = 0; j < level; j++) {
-        randArray[j] = (rand() % 6) + 1;
+        int n1;
+        n1 = (rand() % 6) + 1;
+        int k;
+        int cond;
+        cond = 1;
+        while (cond != 0){
+            cond = 0;
+            for (k = 0; k < j; k++){
+                cond = cond + (n1 == randArray[k]);
+            }
+            if (cond != 0)
+                n1 = (rand() % 6) + 1;
+        }
+        randArray[j] = n1;
     }
     return;
 }
@@ -182,14 +205,16 @@ void drawAliens(){
 
 void moveAliens(){
     int i = 0;
-    int newArray[6];
+    int newArray[6] = {};
     while (i < 9) {
         location = location + 9;
         Graphics_clearDisplay(&g_sContext);
         unsigned int k = 0;
         while (k <= 3) {
             drawAliens();
-            unsigned int keyPressed = atoi(getKey());
+            char key[1];
+            key[0] = getKey();
+            unsigned int keyPressed = atoi(key);
             int x = 0;
             int n;
             for (n = 0; n < level; n++) {
@@ -198,7 +223,11 @@ void moveAliens(){
                     x++;
                 }
             }
-            randArray[6] = newArray[6];
+            int c;
+           for (c = 0; c < 6; c++) {
+               randArray[c] = newArray[c];
+               newArray[c] = 0;
+           }
             k++;
         }
         i++;
